@@ -1,7 +1,7 @@
 # SparkFun-DistanceSensorVL53L1X
 Demonstration of the SparkFun VL53L1X Distance Sensor
 
-![Screenshot of the graphical user interface](https://github.com/crickert1234/SparkFun-DistanceSensorVL53L1X/blob/master/DistanceSensorVL53L1X.png)
+![Screenshot of the graphical user interface](https://github.com/crickert1234/SparkFun-VL53L1X/blob/master/DistanceSensorVL53L1X.png)
 
 ## Hardware
 * [SparkFun RedBoard - Programmed with Arduino](https://www.sparkfun.com/products/13975)
