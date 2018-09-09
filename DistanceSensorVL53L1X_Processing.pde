@@ -38,6 +38,8 @@ static final int nb = bi * nv + 2;  // number of bytes expected per data transmi
 byte[] offBuffer = new byte[4096];  // buffer for offset correction, maximum size
 byte[] inBuffer = new byte[nb];     // buffer for data transmission, data transmission size
 int value = 0;                      // single sensor reading
+int avgs = 100;                     // number of sensor readings for averaging
+float avg = 0.0;                    // averaged sensor reading
 
 
 // configure serial port
@@ -53,6 +55,7 @@ void ONLINE() {
 void RESET() {
   cp5.getController("ONLINE").setColorForeground(color(100, 100, 100));
   cp5.getController("d [mm]").setMax(1000);
+  cp5.getController("avg [mm]").setMax(1000);
 }
 
 void receiveSensorData() {
@@ -67,16 +70,56 @@ void receiveSensorData() {
   // begin data processing, end with line feed character
   serialPort.readBytesUntil(lf, inBuffer);
   value = ByteBuffer.wrap(inBuffer).order(ByteOrder.LITTLE_ENDIAN).getShort(0);
-  if (value > cp5.getController("d [mm]").getMax())
-    cp5.getController("d [mm]").setMax(value);
-  cp5.getController("d [mm]").setValue(value);
   println(value); print(" ");
 
   // confirm data transmission, return tabulator character
   cp5.getController("ONLINE").setColorForeground(color(0, 255, 0));
   serialPort.write(tb);
+  
+  // update distance slider
+  if (value > cp5.getController("d [mm]").getMax()) {
+    cp5.getController("d [mm]").setMax(value);
+    cp5.getController("avg [mm]").setMax(value);
+  }
+  cp5.getController("d [mm]").setValue(value);
+  
+  // keep track of value history for averaging
+  historyBuffer.addValue(value);
+  avg = historyBuffer.avgValue();
+  cp5.getController("avg [mm]").setValue(avg);
 
 }
+
+
+// classes
+public class circularBuffer {
+  
+  // fields
+  private int size;
+  private int index;
+  private int[] values;
+  
+  // methods
+  public void addValue(int value) {
+    values[index] = value;
+    index = (index + 1) % size;       // adding element of length 1
+  }
+  
+  public float avgValue() {
+    float sum = 0.0;
+    for (int i=0; i<size; i++)
+      sum += values[i];
+    return (sum/size);
+  }
+  
+  // constructor
+  public circularBuffer(int history) {
+    size = history;
+    values = new int[size];
+    index = 0;
+  }
+}
+circularBuffer historyBuffer = new circularBuffer(avgs);
 
 
 void setup() {
@@ -108,6 +151,14 @@ void setup() {
     .setColorForeground(color(0, 128, 255))
     .setColorBackground(color(128,128,128));
 
+  cp5.addSlider("avg [mm]")
+    .setPosition(150, 150)
+    .setSize(500, 50)
+    .setRange(0, 1000)
+    .setValue(1)
+    .setColorForeground(color(192, 192, 192))
+    .setColorBackground(color(128,128,128));
+    
 }
 
 
