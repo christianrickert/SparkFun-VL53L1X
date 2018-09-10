@@ -12,4 +12,4 @@ Demonstration of the SparkFun VL53L1X Distance Sensor
 The connection between the RedBoard and the graphical user interface is realized via virtual COM drivers from [FTDI](http://www.ftdichip.com/Drivers/VCP.htm). The communication is implemented through a custom serial port handshake, i.e. the RedBoard will not record or transmit new data before the previous transmission has been confirmed by the graphical user interface.
 
 ## Averaging
-The sketch contains a very basic (template) Java-class for a circular buffer that is used for the averaging of consecutive sensor values.
+The sketch contains a basic Java-class for a circular buffer that can be used as a template for other projects. Previous sensor values are averaged with the help of the circular buffer to calculate the moving average.
