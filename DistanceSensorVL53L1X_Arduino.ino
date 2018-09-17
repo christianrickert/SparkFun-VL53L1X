@@ -21,6 +21,7 @@
 // imports
 #include <SparkFun_VL53L1X_Arduino_Library.h>
 #include <vl53l1_register_map.h>
+#include <Wire.h>
 
 
 // constants
@@ -49,6 +50,10 @@ int value = 0;          // sensor reading [mm]
 
 void setup() {
 
+  // configure I2C
+  Wire.begin();
+  Wire.setClock(400000)          // fast mode, standard: 100k
+  
   // configure sensor
   sensor.begin();
 
@@ -87,6 +92,7 @@ void loop() {
     delay(1);
 
   // fetching response, do nothing
-  Serial.read() == sign.asInt;
+  if (Serial.read() == sign.asInt);
+    // do nothing
 
 }
